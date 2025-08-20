@@ -234,7 +234,7 @@ impl MftEntry {
             Some(filename) => Some(filename.clone()),
             None => {
                 // Try to take anything
-                file_name_attributes.get(0).cloned()
+                file_name_attributes.first().cloned()
             }
         }
     }

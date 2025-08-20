@@ -81,10 +81,10 @@ fn find_entry_size<T: Read + Seek>(data: &mut T, size: u64) -> Result<u32> {
 
 fn join_paths(path: String, name: &str) -> String {
     // Ignore empty parents
-    if path == "" {
+    if path.is_empty() {
         String::from(name)
     } else {
-        String::from(format!("{}/{}", path, name))
+        format!("{}/{}", path, name)
     }
 }
 
@@ -171,7 +171,7 @@ impl<T: Read + Seek> MftParser<T> {
 
                 // MFT entry 5 is the root path.
                 if parent_entry_id == 5 {
-                    return Ok(Some(String::from(filename_header.name)));
+                    return Ok(Some(filename_header.name));
                 }
 
                 if parent_entry_id == entry_id {
@@ -179,10 +179,7 @@ impl<T: Read + Seek> MftParser<T> {
                         "Found self-referential file path, for entry ID {}",
                         entry_id
                     );
-                    return Ok(Some(String::from(format!(
-                        "[Orphaned]/{}",
-                        filename_header.name
-                    ))));
+                    return Ok(Some(format!("[Orphaned]/{}", filename_header.name)));
                 }
 
                 if parent_entry_id > 0 {
@@ -193,7 +190,7 @@ impl<T: Read + Seek> MftParser<T> {
                 } else {
                     trace!("Found orphaned entry ID {}", entry_id);
 
-                    let orphan = String::from(format!("[Orphaned]/{}", filename_header.name));
+                    let orphan = format!("[Orphaned]/{}", filename_header.name);
 
                     self.entries_cache
                         .put(entry.header.record_number, orphan.clone());
